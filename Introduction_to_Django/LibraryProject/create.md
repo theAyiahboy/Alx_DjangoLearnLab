@@ -1,14 +1,21 @@
-# CREATE Operation
+# Create a Model, View, and URL for the Bookshelf App
+
+This guide helps you set up the `bookshelf` app inside the `LibraryProject` Django project.
+
+---
+
+## 1️⃣ Create the `Book` model
+
+Open **bookshelf/models.py** and add:
 
 ```python
-# Import the Book model
-from bookshelf.models import Book
+from django.db import models
 
-# Create a Book instance
-book = Book.objects.create(title="1984", author="George Orwell", publication_year=1949)
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=100)
+    published_date = models.DateField()
+    isbn = models.CharField(max_length=13, unique=True)
 
-# Display the created book
-book
-
-# Expected Output:
-# <Book: 1984 by George Orwell (1949)>
+    def __str__(self):
+        return self.title

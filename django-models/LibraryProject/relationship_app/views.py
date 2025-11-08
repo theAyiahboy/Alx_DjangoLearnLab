@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import user_passes_test, permission_required
 from .models import Book, Library
-from .forms import BookForm  # Ensure this exists in forms.py
+from .forms import BookForm  # Make sure BookForm exists
+
 
 # Function-based view: list all books
 def list_books(request):

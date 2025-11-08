@@ -1,4 +1,3 @@
-<!-- list_books.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +8,7 @@
     <h1>Books Available:</h1>
     <ul>
         {% for book in books %}
-            <li>{{ book.title }} by {{ book.author.name }}</li>
-        {% empty %}
-            <li>No books found.</li>
+        <li>{{ book.title }} by {{ book.author.name }}</li>
         {% endfor %}
     </ul>
 </body>

@@ -11,8 +11,10 @@ from .views import (
 )
 
 urlpatterns = [
-    # Existing views
+    # Function-based view
     path('books/', list_books, name='list_books'),
+
+    # Class-based view
     path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
 
     # Role-based views

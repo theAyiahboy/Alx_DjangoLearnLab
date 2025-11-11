@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     
     # Local apps
     'bookshelf',
-    'relationship_app',   # add this line for your custom user model
+    
 ]
 
 MIDDLEWARE = [
@@ -124,4 +124,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Custom user model
-AUTH_USER_MODEL = 'relationship_app.CustomUser'
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
+

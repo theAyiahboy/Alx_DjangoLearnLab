@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Author, Book, Library, Librarian, UserProfile
 
+# ---------------- Custom User Admin ----------------
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     # Add the custom fields to the admin interface
@@ -15,5 +16,31 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('username', 'email', 'first_name', 'last_name')
     ordering = ('username',)
 
-# Explicitly register CustomUser
+# Register the CustomUser
 admin.site.register(CustomUser, CustomUserAdmin)
+
+# ---------------- Other Models ----------------
+@admin.register(Author)
+class AuthorAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'publication_year')
+    list_filter = ('author', 'publication_year')
+    search_fields = ('title',)
+
+@admin.register(Library)
+class LibraryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    filter_horizontal = ('books',)
+
+@admin.register(Librarian)
+class LibrarianAdmin(admin.ModelAdmin):
+    list_display = ('name', 'library')
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'role')
+    list_filter = ('role',)

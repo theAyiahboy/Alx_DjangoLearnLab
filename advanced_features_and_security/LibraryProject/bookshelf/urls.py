@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('relationship_app.urls')),  # existing app
     path('bookshelf/', include('bookshelf.urls')),  # new bookshelf app
+    path('example-form/', views.example_form_view, name='example_form'),
+
 ]

@@ -92,3 +92,36 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom user model
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
+
+# SECURITY CONFIGURATIONS
+
+DEBUG = False  # Must be False in production
+
+ALLOWED_HOSTS = ['yourdomain.com', 'localhost', '127.0.0.1']
+
+# Browser security headers
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Cookies only sent over HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Optional but recommended
+SECURE_HSTS_SECONDS = 31536000  # Enforce HTTPS for 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Content Security Policy (CSP) using django-csp (install via pip)
+INSTALLED_APPS += [
+    'csp',
+]
+
+MIDDLEWARE += [
+    'csp.middleware.CSPMiddleware',
+]
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")

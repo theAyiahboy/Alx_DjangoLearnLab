@@ -1,22 +1,17 @@
 # api/views.py
 from rest_framework import generics, viewsets
+from rest_framework.permissions import IsAuthenticated
 from .models import Book
 from .serializers import BookSerializer
 
-# Existing ListAPIView
+# Simple ListAPIView (optional, as mentioned in tasks)
 class BookList(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access
 
-# New ViewSet for CRUD
+# Full CRUD ViewSet
 class BookViewSet(viewsets.ModelViewSet):
-    """
-    Handles all CRUD operations:
-    - GET /books_all/       -> list all books
-    - GET /books_all/<id>/  -> retrieve one book
-    - POST /books_all/      -> create a book
-    - PUT /books_all/<id>/  -> update a book
-    - DELETE /books_all/<id>/ -> delete a book
-    """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access

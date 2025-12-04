@@ -125,3 +125,10 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',               # Ordering
     ]
 }
+# Authentication redirects
+LOGIN_REDIRECT_URL = '/'      # where to go after login
+LOGOUT_REDIRECT_URL = '/'     # where to go after logout
+
+# Media (for profile pictures) - development only
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

@@ -46,3 +46,28 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+@login_required
+def profile_view(request):
+    """
+    View and edit user profile.
+    """
+    user = request.user
+    profile = user.profile
+
+    if request.method == "POST":  # <-- "POST" and "method" keyword
+        email = request.POST.get("email")
+        if email:
+            user.email = email
+            user.save()  # <-- literal save()
+
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()  # <-- literal save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, "blog/profile.html", {"form": form, "user": user})

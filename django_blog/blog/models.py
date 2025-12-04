@@ -4,24 +4,20 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 class Post(models.Model):
+    """
+    Represents a blog post.
+    """
     title = models.CharField(max_length=200)
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
 
+    class Meta:
+        ordering = ['-published_date']  # Latest posts first
+
     def __str__(self):
         return self.title
 
-
-# Example Post model (if present)
-# from django.utils import timezone
-# class Post(models.Model):
-#     title = models.CharField(max_length=200)
-#     content = models.TextField()
-#     published_date = models.DateTimeField(auto_now_add=True)
-#     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
-#     def __str__(self):
-#         return self.title
 
 class Profile(models.Model):
     """
@@ -34,7 +30,8 @@ class Profile(models.Model):
     def __str__(self):
         return f"Profile for {self.user.username}"
 
-# Create or update Profile automatically when a User is saved
+
+# Automatically create or update Profile when a User is saved
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:

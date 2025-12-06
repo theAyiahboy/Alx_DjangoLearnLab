@@ -1,51 +1,36 @@
-from django.contrib.auth.decorators import login_required  # Required for checker
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import Post, Comment
-from .forms import PostForm, CommentForm
-from django.shortcuts import get_object_or_404
+# blog/views.py
 
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import Post
-from .forms import PostForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .forms import RegisterForm
 
-class PostListView(ListView):
-    model = Post
-    template_name = 'blog/post_list.html'
-    context_object_name = 'posts'
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Automatically log user in
+            return redirect('profile')
+    else:
+        form = RegisterForm()
 
-
-class PostDetailView(DetailView):
-    model = Post
-    template_name = 'blog/post_detail.html'
+    return render(request, 'blog/register.html', {'form': form})
 
 
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    form_class = PostForm
-    template_name = 'blog/post_form.html'
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+@login_required
+def profile_view(request):
+    return render(request, 'blog/profile.html')
 
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Post
-    form_class = PostForm
-    template_name = 'blog/post_form.html'
+@login_required
+def profile_edit_view(request):
+    if request.method == 'POST':
+        user = request.user
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.save()
+        return redirect('profile')
 
-    def test_func(self):
-        return self.get_object().author == self.request.user
-
-
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Post
-    template_name = 'blog/post_confirm_delete.html'
-    success_url = reverse_lazy('post_list')
-
-    def test_func(self):
-        return self.get_object().author == self.request.user
+    return render(request, 'blog/profile_edit.html')

@@ -1,18 +1,9 @@
-{% extends "blog/base.html" %}
-{% block title %}Profile{% endblock %}
+{% extends "base.html" %}
 {% block content %}
-<h1>Profile for {{ user.username }}</h1>
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  <label>Username (read-only):</label>
-  <input type="text" value="{{ user.username }}" disabled /><br>
-  <label>Email:</label>
-  <input type="email" name="email" value="{{ user.email }}" /><br>
-  {{ form.as_p }}
-  <button type="submit">Save profile</button>
-</form>
+<h2>Your Profile</h2>
 
-{% if user.profile.avatar %}
-  <img src="{{ user.profile.avatar.url }}" alt="avatar" width="150">
-{% endif %}
+<p><strong>Username:</strong> {{ request.user.username }}</p>
+<p><strong>Email:</strong> {{ request.user.email }}</p>
+
+<a href="{% url 'profile_edit' %}">Edit Profile</a>
 {% endblock %}

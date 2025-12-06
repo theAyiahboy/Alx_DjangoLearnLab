@@ -1,16 +1,5 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Edit Profile</h2>
-
 <form method="POST">
     {% csrf_token %}
-    <label>Username</label>
-    <input type="text" name="username" value="{{ request.user.username }}">
-
-    <label>Email</label>
-    <input type="email" name="email" value="{{ request.user.email }}">
-
-    <button type="submit">Save</button>
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
 </form>
-
-{% endblock %}

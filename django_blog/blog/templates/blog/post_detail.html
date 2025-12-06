@@ -1,35 +1,20 @@
 {% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
 {% block content %}
-<h1>{{ object.title }}</h1>
-<p>By {{ object.author.username }} • {{ object.created_at }}</p>
-<p>{{ object.content }}</p>
+<article>
+  <h1>{{ post.title }}</h1>
+  <p>By {{ post.author.username }} — {{ post.published_date|date:"M d, Y H:i" }}</p>
+  <div>
+    {{ post.content|linebreaks }}
+  </div>
 
-{% if user == object.author %}
-    <a href="{% url 'post_update' object.pk %}">Edit</a> |
-    <a href="{% url 'post_delete' object.pk %}">Delete</a>
-{% endif %}
+  {% if user.is_authenticated and user == post.author %}
+    <p>
+      <a href="{% url 'post_update' post.pk %}">Edit</a> |
+      <a href="{% url 'post_delete' post.pk %}">Delete</a>
+    </p>
+  {% endif %}
+</article>
 
-<hr>
-
-<h3>Comments</h3>
-
-{% for comment in object.comments.all %}
-    <div>
-        <p><strong>{{ comment.author.username }}:</strong> {{ comment.content }}</p>
-        <p><small>{{ comment.created_at }}</small></p>
-
-        {% if user == comment.author %}
-            <a href="{% url 'comment_update' comment.pk %}">Edit</a> |
-            <a href="{% url 'comment_delete' comment.pk %}">Delete</a>
-        {% endif %}
-    </div>
-{% empty %}
-    <p>No comments yet.</p>
-{% endfor %}
-
-{% if user.is_authenticated %}
-    <a href="{% url 'comment_create' object.pk %}">Add a comment</a>
-{% else %}
-    <p><a href="{% url 'login' %}">Login</a> to comment.</p>
-{% endif %}
+<a href="{% url 'post_list' %}">Back to posts</a>
 {% endblock %}

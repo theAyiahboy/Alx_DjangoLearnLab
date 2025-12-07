@@ -92,8 +92,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/comment_form.html'
 
     def form_valid(self, form):
-        post_id = self.kwargs.get('post_id')
-        post = get_object_or_404(Post, pk=post_id)
+        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
         form.instance.post = post
         form.instance.author = self.request.user
         return super().form_valid(form)

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
 
     # Your app
     'blog',
+    'taggit',
 
     # Added for DRF
     'rest_framework',

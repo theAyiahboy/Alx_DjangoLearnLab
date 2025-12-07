@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
@@ -92,6 +92,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/comment_form.html'
 
     def form_valid(self, form):
+        # Link comment to the correct post
         post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
         form.instance.post = post
         form.instance.author = self.request.user

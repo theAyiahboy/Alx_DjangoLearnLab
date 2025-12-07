@@ -1,20 +1,11 @@
 {% extends "base.html" %}
-{% block title %}{{ post.title }}{% endblock %}
 {% block content %}
-<article>
-  <h1>{{ post.title }}</h1>
-  <p>By {{ post.author.username }} — {{ post.published_date|date:"M d, Y H:i" }}</p>
-  <div>
-    {{ post.content|linebreaks }}
-  </div>
+<h2>{{ object.title }}</h2>
+<p>{{ object.content }}</p>
+<small>By {{ object.author.username }} on {{ object.published_date }}</small>
 
-  {% if user.is_authenticated and user == post.author %}
-    <p>
-      <a href="{% url 'post_update' post.pk %}">Edit</a> |
-      <a href="{% url 'post_delete' post.pk %}">Delete</a>
-    </p>
-  {% endif %}
-</article>
-
-<a href="{% url 'post_list' %}">Back to posts</a>
+{% if user.is_authenticated and user == object.author %}
+  <a href="{% url 'post_update' object.pk %}">Edit</a> |
+  <a href="{% url 'post_delete' object.pk %}">Delete</a>
+{% endif %}
 {% endblock %}

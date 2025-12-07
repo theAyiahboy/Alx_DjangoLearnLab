@@ -1,32 +1,11 @@
 {% extends "base.html" %}
-{% block title %}All Posts{% endblock %}
 {% block content %}
-<h1>All posts</h1>
-
-{% if posts %}
-  <ul>
-  {% for post in posts %}
-    <li>
-      <h3><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h3>
-      <p>By {{ post.author.username }} — {{ post.published_date|date:"M d, Y H:i" }}</p>
-      <p>{{ post.content|truncatechars:150 }}</p>
-      <a href="{% url 'post_detail' post.pk %}">Read more</a>
-    </li>
-  {% endfor %}
-  </ul>
-
-  {% if is_paginated %}
-    <div class="pagination">
-      {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-      {% endif %}
-      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-      {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next</a>
-      {% endif %}
-    </div>
-  {% endif %}
-{% else %}
-  <p>No posts yet.</p>
-{% endif %}
+<h2>All Posts</h2>
+{% for post in posts %}
+  <div>
+    <h3><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h3>
+    <p>{{ post.content|truncatewords:20 }}</p>
+    <small>By {{ post.author.username }} on {{ post.published_date }}</small>
+  </div>
+{% endfor %}
 {% endblock %}

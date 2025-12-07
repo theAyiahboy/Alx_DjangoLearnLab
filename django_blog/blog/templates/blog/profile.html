@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
 {% block content %}
-<h2>Your profile</h2>
-<p><strong>Username:</strong> {{ request.user.username }}</p>
-<p><strong>Email:</strong> {{ request.user.email }}</p>
-<a href="{% url 'profile_edit' %}">Edit profile</a>
+<h2>Your Profile</h2>
+<p>Username: {{ request.user.username }}</p>
+<p>Email: {{ request.user.email }}</p>
+<a href="{% url 'profile_edit' %}">Edit Profile</a>
 {% endblock %}

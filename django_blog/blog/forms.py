@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from .models import Post, Comment
-from taggit.forms import TagWidget
+from taggit.forms import TagWidget  # for tagging in forms
 
 class ProfileUpdateForm(UserChangeForm):
     class Meta:
@@ -14,7 +14,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'content', 'tags']
         widgets = {
-            'tags': TagWidget(),  # makes tag input easy to manage
+            'tags': TagWidget(),
         }
 
 class CommentForm(forms.ModelForm):

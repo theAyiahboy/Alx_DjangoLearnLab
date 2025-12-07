@@ -1,4 +1,4 @@
-from django.db.models import Q  # Add at the top with imports
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -55,7 +55,7 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
@@ -64,7 +64,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
@@ -93,7 +93,6 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/comment_form.html'
 
     def form_valid(self, form):
-        # Link comment to the correct post
         post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
         form.instance.post = post
         form.instance.author = self.request.user
@@ -129,8 +128,6 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
 
-
-
 # -------------------
 # Search View
 # -------------------
@@ -145,6 +142,6 @@ class PostSearchView(ListView):
             return Post.objects.filter(
                 Q(title__icontains=query) |
                 Q(content__icontains=query) |
-                Q(comment__content__icontains=query)  # Optional: search in comments
+                Q(tags__name__icontains=query)  # ✅ search by tags
             ).distinct()
         return Post.objects.none()

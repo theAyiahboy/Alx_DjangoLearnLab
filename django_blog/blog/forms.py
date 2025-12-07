@@ -14,7 +14,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'content', 'tags']
         widgets = {
-            'tags': TagWidget(),
+            'tags': TagWidget(),  # makes tag input easy to manage
         }
 
 class CommentForm(forms.ModelForm):

@@ -157,3 +157,14 @@ class ListCommentsView(APIView):
         comments = post.comments.all().order_by('-created_at')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get the list of users the logged-in user is following
+        following_users = request.user.following.all()
+        # Get posts from these users, newest first
+        posts = Post.objects.filter(user__in=following_users).order_by('-created_at')
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)

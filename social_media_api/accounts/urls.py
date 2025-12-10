@@ -40,3 +40,9 @@ urlpatterns += [
     path('posts/<int:post_id>/comment/', CommentPostView.as_view()),
     path('posts/<int:post_id>/comments/', ListCommentsView.as_view()),
 ]
+
+from .views import FeedView
+
+urlpatterns += [
+    path('feed/', FeedView.as_view(), name='feed'),
+]

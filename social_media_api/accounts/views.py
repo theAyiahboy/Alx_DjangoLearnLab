@@ -6,20 +6,22 @@ from rest_framework.views import APIView
 from .serializers import RegisterSerializer, LoginSerializer
 from .models import User
 
-class RegisterView(generics.CreateAPIView):
-    serializer_class = RegisterSerializer
+from .serializers import RegisterSerializer
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-
-        token, created = Token.objects.get_or_create(user=user)
-
+        token = Token.objects.get(user=user)
         return Response({
-            "user": serializer.data,
+            "user": {
+                "username": user.username,
+                "email": user.email
+            },
             "token": token.key
-        }, status=status.HTTP_201_CREATED)
+        })
+
 
 
 class LoginView(APIView):

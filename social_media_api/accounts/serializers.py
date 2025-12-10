@@ -3,6 +3,10 @@ from django.contrib.auth import authenticate
 from .models import User
 from .models import User, Post, Like, Comment
 
+from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

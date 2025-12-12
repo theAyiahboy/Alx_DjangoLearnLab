@@ -1,16 +1,15 @@
-from django.urls import path
-from .views import (
-    RegisterView,
-    LoginView,
-    ProfileView,
-    FollowUserView,
-    UnfollowUserView
-)
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import PostViewSet, CommentViewSet, FeedView, LikePostView, UnlikePostView
+
+# DRF router for Post and Comment viewsets
+router = DefaultRouter()
+router.register(r'posts', PostViewSet, basename='post')
+router.register(r'comments', CommentViewSet, basename='comment')
 
 urlpatterns = [
-    path('register/', RegisterView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('profile/', ProfileView.as_view(), name='profile'),
-    path('follow/<int:pk>/', FollowUserView.as_view(), name='follow-user'),  # use pk
-    path('unfollow/<int:pk>/', UnfollowUserView.as_view(), name='unfollow-user'),  # use pk
+    path('', include(router.urls)),
+    path('feed/', FeedView.as_view(), name='feed'),
+    path('posts/<int:pk>/like/', LikePostView.as_view(), name='like-post'),
+    path('posts/<int:pk>/unlike/', UnlikePostView.as_view(), name='unlike-post'),
 ]

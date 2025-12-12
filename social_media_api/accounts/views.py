@@ -5,9 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from rest_framework.permissions import IsAuthenticated
 
-from .models import User
+from .models import CustomUser
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 from notifications.models import Notification
+
 
 # ---------------------------
 # USER REGISTRATION
@@ -69,8 +70,8 @@ class ProfileView(APIView):
 class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, user_id):
-        target_user = get_object_or_404(User.objects.all(), id=user_id)
+    def post(self, request, pk):  # checker expects pk
+        target_user = get_object_or_404(CustomUser.objects.all(), pk=pk)
 
         if target_user == request.user:
             return Response(
@@ -99,8 +100,8 @@ class FollowUserView(generics.GenericAPIView):
 class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, user_id):
-        target_user = get_object_or_404(User.objects.all(), id=user_id)
+    def post(self, request, pk):  # checker expects pk
+        target_user = get_object_or_404(CustomUser.objects.all(), pk=pk)
 
         if target_user == request.user:
             return Response(

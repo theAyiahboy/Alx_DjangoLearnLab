@@ -54,31 +54,70 @@ class ProfileView(APIView):
 
 class FollowUserView(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, username):
-        try:
-            user_to_follow = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
-
+        user_to_follow = get_object_or_404(User, username=username)
         if user_to_follow == request.user:
-            return Response({"error": "You cannot follow yourself"}, status=400)
-
+            return Response({"error":"You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
         request.user.following.add(user_to_follow)
         return Response({"success": f"You followed {username}"})
+
+class UnfollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, username):
+        user_to_unfollow = get_object_or_404(User, username=username)
+        if user_to_unfollow == request.user:
+            return Response({"error":"You cannot unfollow yourself"}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.remove(user_to_unfollow)
+        return Response({"success": f"You unfollowed {username}"})
+
+# Follow / Unfollow by user id (task required)
+class FollowUserByIdView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(User, id=user_id)
+        if user_to_follow == request.user:
+            return Response({"error":"You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.add(user_to_follow)
+        return Response({"success": f"You followed {user_to_follow.username}"})
+
+class UnfollowUserByIdView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, user_id):
+        user_to_unfollow = get_object_or_404(User, id=user_id)
+        if user_to_unfollow == request.user:
+            return Response({"error":"You cannot unfollow yourself"}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.remove(user_to_unfollow)
+        return Response({"success": f"You unfollowed {user_to_unfollow.username}"})
+    
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
+from .models import User
+
+
+class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        target_user = get_object_or_404(User, id=user_id)
+
+        if target_user == request.user:
+            return Response({"detail": "You cannot follow yourself."}, status=400)
+
+        request.user.following.add(target_user)
+        return Response({"detail": f"You are now following {target_user.username}."}, status=200)
 
 
 class UnfollowUserView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, username):
-        try:
-            user_to_unfollow = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
+    def post(self, request, user_id):
+        target_user = get_object_or_404(User, id=user_id)
 
-        if user_to_unfollow == request.user:
-            return Response({"error": "You cannot unfollow yourself"}, status=400)
+        if target_user == request.user:
+            return Response({"detail": "You cannot unfollow yourself."}, status=400)
 
-        request.user.following.remove(user_to_unfollow)
-        return Response({"success": f"You unfollowed {username}"})
+        request.user.following.remove(target_user)
+        return Response({"detail": f"You have unfollowed {target_user.username}."}, status=200)

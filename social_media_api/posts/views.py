@@ -1,6 +1,13 @@
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated  
+from django.shortcuts import get_object_or_404
+from accounts.models import User
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
+
+
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -39,3 +46,15 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # uses related_name='following' from accounts.User
+        following_users = request.user.following.all()
+        # Post model here must use `author` FK; if your field is `user`, change author__in => user__in
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+        serializer = PostSerializer(posts, many=True, context={'request': request})
+        return Response(serializer.data)

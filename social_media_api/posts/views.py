@@ -103,6 +103,9 @@ class LikePostView(APIView):
         return Response({"detail": "Post liked successfully"}, status=status.HTTP_200_OK)
 
 
+# ---------------------------
+# Unlike a Post
+# ---------------------------
 class UnlikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

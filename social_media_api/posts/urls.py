@@ -1,8 +1,21 @@
 from django.urls import path
-from .views import FeedView, LikePostView, UnlikePostView
+from .views import (
+    RegisterView,
+    LoginView,
+    ProfileView,
+    FollowUserView,
+    UnfollowUserView,
+)
 
 urlpatterns = [
-    path('feed/', FeedView.as_view(), name='feed'),
-    path('posts/<int:pk>/like/', LikePostView.as_view(), name='like-post'),  # <- use pk
-    path('posts/<int:pk>/unlike/', UnlikePostView.as_view(), name='unlike-post'),  # <- use pk
+    # User registration and login
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+
+    # User profile
+    path('profile/', ProfileView.as_view(), name='profile'),
+
+    # Follow/unfollow users
+    path('follow/<int:pk>/', FollowUserView.as_view(), name='follow-user'),  # use pk
+    path('unfollow/<int:pk>/', UnfollowUserView.as_view(), name='unfollow-user'),  # use pk
 ]

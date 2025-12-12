@@ -5,12 +5,12 @@ from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from rest_framework.permissions import IsAuthenticated
 
-from .models import CustomUser
+from .models import User
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
-
+from notifications.models import Notification
 
 # ---------------------------
-#   USER REGISTRATION
+# USER REGISTRATION
 # ---------------------------
 class RegisterView(APIView):
     def post(self, request):
@@ -18,7 +18,8 @@ class RegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        token = Token.objects.get(user=user)
+        # Create token for the new user
+        token, created = Token.objects.get_or_create(user=user)
 
         return Response({
             "user": {
@@ -30,7 +31,7 @@ class RegisterView(APIView):
 
 
 # ---------------------------
-#   USER LOGIN
+# USER LOGIN
 # ---------------------------
 class LoginView(APIView):
     serializer_class = LoginSerializer
@@ -46,7 +47,7 @@ class LoginView(APIView):
 
 
 # ---------------------------
-#   USER PROFILE
+# USER PROFILE
 # ---------------------------
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -56,22 +57,20 @@ class ProfileView(APIView):
         return Response(serializer.data)
 
     def put(self, request):
-        serializer = ProfileSerializer(
-            request.user, data=request.data, partial=True
-        )
+        serializer = ProfileSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
 
 # ---------------------------
-#   FOLLOW USER
+# FOLLOW USER
 # ---------------------------
 class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        target_user = get_object_or_404(CustomUser.objects.all(), id=user_id)
+        target_user = get_object_or_404(User.objects.all(), id=user_id)
 
         if target_user == request.user:
             return Response(
@@ -80,6 +79,14 @@ class FollowUserView(generics.GenericAPIView):
             )
 
         request.user.following.add(target_user)
+
+        # Optional: Notification to the user being followed
+        Notification.objects.create(
+            recipient=target_user,
+            actor=request.user,
+            verb="started following you",
+        )
+
         return Response(
             {"detail": f"You are now following {target_user.username}."},
             status=status.HTTP_200_OK
@@ -87,13 +94,13 @@ class FollowUserView(generics.GenericAPIView):
 
 
 # ---------------------------
-#   UNFOLLOW USER
+# UNFOLLOW USER
 # ---------------------------
 class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
-        target_user = get_object_or_404(CustomUser.objects.all(), id=user_id)
+        target_user = get_object_or_404(User.objects.all(), id=user_id)
 
         if target_user == request.user:
             return Response(

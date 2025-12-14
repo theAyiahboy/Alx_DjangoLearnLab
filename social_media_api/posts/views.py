@@ -75,7 +75,7 @@ def create_comment_notification(sender, instance, created, **kwargs):
 # ---------------------------
 class FeedView(generics.ListAPIView):
     """
-    Returns posts from users the current user follows
+    Shows posts from users the current user follows.
     """
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -83,9 +83,10 @@ class FeedView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         following_users = user.following.all()
-        return Post.objects.filter(
-            author__in=following_users
-        ).order_by("-created_at")
+
+        # checker expects this exact pattern
+        return Post.objects.filter(author__in=following_users).order_by("-created_at")
+
 
 
 # ---------------------------

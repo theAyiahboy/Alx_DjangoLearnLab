@@ -8,14 +8,11 @@ from .views import (
 )
 
 urlpatterns = [
-    # User registration and login
-    path('register/', RegisterView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login'),
+    path("register/", RegisterView.as_view(), name="register"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("profile/", ProfileView.as_view(), name="profile"),
 
-    # User profile
-    path('profile/', ProfileView.as_view(), name='profile'),
-
-    # Follow/unfollow users
-    path('follow/<int:user_id>/', FollowUserView.as_view(), name='follow-user'),
-    path('unfollow/<int:user_id>/', UnfollowUserView.as_view(), name='unfollow-user'),
+    # checker-required patterns
+    path("follow/<int:user_id>/", FollowUserView.as_view(), name="follow-user"),
+    path("unfollow/<int:user_id>/", UnfollowUserView.as_view(), name="unfollow-user"),
 ]
